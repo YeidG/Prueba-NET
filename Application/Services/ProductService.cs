@@ -85,5 +85,16 @@ namespace Application.Services
 
             return product;
         }
+
+
+        public async Task Delete(int id)
+        {
+            var product = await _repo.GetById(id);
+
+            if (product == null)
+                throw new Exception("Producto no encontrado");
+
+            await _repo.Delete(id);
+        }
     }
 }
