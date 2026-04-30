@@ -1,0 +1,32 @@
+# Directorios de compilación de .NET
+**/bin/
+**/obj/
+**/out/
+
+# Archivos de publicación
+publish/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Git
+.git
+.gitignore
+
+# Archivos de configuración local y secretos
+**/*.user
+**/*.userosscache
+**/*.suo
+**/appsettings.Development.json
+
+# Archivos de base de datos local (opcional)
+# Si quieres que la DB del repo sea la inicial, NO la ignores.
+# Si prefieres que el contenedor empiece limpio, descomenta la línea de abajo:
+# *.db
+
+# VS Code y Visual Studio
+.vscode/
+.vs/
+*.sln.idsnr
+*.usersecrets
