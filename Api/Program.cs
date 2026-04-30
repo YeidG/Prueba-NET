@@ -4,6 +4,10 @@ using Infrastructure.Persistences;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 
+
+
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8056";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -33,5 +37,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
+app.Urls.Add($"http://*:{port}");
 app.Run();

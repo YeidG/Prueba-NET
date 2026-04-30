@@ -196,5 +196,35 @@ namespace Api.Controllers
                 return BadRequest(new ApiResponse<object> { Success = false, Message = ex.Message });
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _service.Delete(id);
+
+                return Ok(new ApiResponse<object>
+                {
+                    Success = true,
+                    Message = "Producto eliminado correctamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no encontrado"))
+                    return NotFound(new ApiResponse<object>
+                    {
+                        Success = false,
+                        Message = ex.Message
+                    });
+
+                return BadRequest(new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }
