@@ -12,6 +12,8 @@ Entity Framework Core
 SQLite
 Swagger (OpenAPI)
 
+Version publicada
+Abrir en navegador https://prueba-net.onrender.com/index.html
 
 🚀 Cómo ejecutar el proyecto
 1. Clonar repositorio
@@ -21,7 +23,7 @@ dotnet run
 3. Acceder a Swagger
 Abrir en navegador:
 https://localhost:xxxx/swagger
-Abrir en navegador https://prueba-net.onrender.com/index.html(version publicada)
+
 📦 Funcionalidades
 🔹 Productos
 Crear producto
