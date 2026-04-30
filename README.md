@@ -21,7 +21,7 @@ dotnet run
 3. Acceder a Swagger
 Abrir en navegador:
 https://localhost:xxxx/swagger
-
+Abrir en navegador https://prueba-net.onrender.com/index.html(version publicada)
 📦 Funcionalidades
 🔹 Productos
 Crear producto
