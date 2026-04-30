@@ -1,0 +1,26 @@
+﻿
+**/bin/
+**/obj/
+**/out/
+
+
+publish/
+
+# Docker
+Dockerfile
+.dockerignore
+
+.git
+.gitignore
+
+
+**/*.user
+**/*.userosscache
+**/*.suo
+**/appsettings.Development.json
+
+
+.vscode/
+.vs/
+*.sln.idsnr
+*.usersecrets
