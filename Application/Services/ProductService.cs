@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs.Request;
+using Application.Interfaces;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,11 @@ namespace Application.Services
 
         public async Task<Product> Create(Product product)
         {
+            var existing = await _repo.GetByCode(product.Code);
+
+            if (existing != null)
+                throw new Exception("El código del producto ya existe");
+
             return await _repo.Add(product);
         }
 
@@ -25,24 +31,59 @@ namespace Application.Services
             return await _repo.GetAll(page, size);
         }
 
-        public async Task<Product> GetById(Guid id)
+        public async Task<Product> GetById(int id)
         {
             var product = await _repo.GetById(id);
-            if (product == null) throw new Exception("No encontrado");
+            if (product == null) throw new Exception("Producto No encontrado");
             return product;
         }
 
-        public async Task UpdateStock(Guid id, int quantity, bool increase)
+        public async Task<Product> GetByCode(String code)
+        {
+            var product = await _repo.GetByCode(code);
+            if (product == null) throw new Exception("Producto No encontrado");
+            return product;
+        }
+
+        public async Task UpdateStock(int id, int quantity)
         {
             var product = await _repo.GetById(id);
-            if (product == null) throw new Exception("No encontrado");
+            if (product == null) throw new Exception("Producto No encontrado");
 
-            if (increase)
+         
+            if (quantity > 0)
+            {
                 product.IncreaseStock(quantity);
+            }
             else
-                product.DecreaseStock(quantity);
+            {
+                product.DecreaseStock(Math.Abs(quantity));
+            }
 
             await _repo.Update(product);
+        }
+
+
+        public async Task<Product> Update(int id, UpdateProductDto dto)
+        {
+            var product = await _repo.GetById(id);
+
+            if (product == null)
+                throw new Exception("Producto no encontrado");
+
+            
+            var existing = await _repo.GetByCode(dto.Code);
+            if (existing != null && existing.Id != id)
+                throw new Exception("El código ya existe");
+
+            product.Code = dto.Code;
+            product.Name = dto.Name;
+            product.Price = dto.Price;
+            product.Stock = dto.Stock;
+
+            await _repo.Update(product);
+
+            return product;
         }
     }
 }

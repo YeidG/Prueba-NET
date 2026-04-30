@@ -22,12 +22,17 @@ namespace Infrastructure.Repository
             return product;
         }
 
-        public async Task<Product> GetById(Guid id)
+        public async Task<Product> GetById(int id)
         {
             return await _context.Products
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<Product> GetByCode(string code)
+        {
+            return await _context.Products
+                .FirstOrDefaultAsync(p => p.Code == code);
+        }
         public async Task<List<Product>> GetAll(int page, int size)
         {
             return await _context.Products
@@ -42,7 +47,7 @@ namespace Infrastructure.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             var product = await GetById(id);
             if (product != null)

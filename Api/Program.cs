@@ -1,7 +1,7 @@
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.Persistences;
-using Infrastructure.Repositories;
+using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,8 +1,11 @@
-﻿using Application.Services;
+﻿using Application.DTOs;
+using Application.DTOs.Request;
+using Application.DTOs.Response;
+using Application.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controller
+namespace Api.Controllers
 {
     [ApiController]
     [Route("api/products")]
@@ -15,30 +18,183 @@ namespace Api.Controller
             _service = service;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(Product product)
+        
+        [HttpPost("/create")]
+        public async Task<IActionResult> Create(CreateProductDto dto)
         {
-            var result = await _service.Create(product);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            try
+            {
+                var product = new Product
+                {
+                    Code = dto.Code,
+                    Name = dto.Name,
+                    Price = dto.Price,
+                    Stock = dto.Stock
+                };
+
+                var result = await _service.Create(product);
+
+                return Created("", new ApiResponse<ProductResponseDto>
+                {
+                    Success = true,
+                    Message = "Producto creado correctamente",
+                    Data = new ProductResponseDto
+                    {
+                        Id = result.Id,
+                        Code = result.Code,
+                        Name = result.Name,
+                        Price = result.Price,
+                        Stock = result.Stock
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
         }
 
-        [HttpGet]
+        
+        [HttpGet("findAll")]
         public async Task<IActionResult> GetAll(int page = 1, int size = 10)
         {
-            return Ok(await _service.GetAll(page, size));
+            var products = await _service.GetAll(page, size);
+
+            var response = products.Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Code = p.Code,
+                Name = p.Name,
+                Price = p.Price,
+                Stock = p.Stock
+            });
+
+            return Ok(new ApiResponse<IEnumerable<ProductResponseDto>>
+            {
+                Success = true,
+                Message = "Listado de productos",
+                Data = response
+            });
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        
+        [HttpGet("getById/{id:int}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            return Ok(await _service.GetById(id));
+            try
+            {
+                var p = await _service.GetById(id);
+
+                return Ok(new ApiResponse<ProductResponseDto>
+                {
+                    Success = true,
+                    Message = "Producto encontrado",
+                    Data = new ProductResponseDto
+                    {
+                        Id = p.Id,
+                        Code = p.Code,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no encontrado"))
+                    return NotFound(new ApiResponse<object> { Success = false, Message = ex.Message });
+
+                return BadRequest(new ApiResponse<object> { Success = false, Message = ex.Message });
+            }
         }
 
-        [HttpPut("{id}/stock")]
-        public async Task<IActionResult> UpdateStock(Guid id, int quantity, bool increase)
+        
+        [HttpGet("code/{code}")]
+        public async Task<IActionResult> GetByCode(string code)
         {
-            await _service.UpdateStock(id, quantity, increase);
-            return NoContent();
+            try
+            {
+                var p = await _service.GetByCode(code);
+
+                return Ok(new ApiResponse<ProductResponseDto>
+                {
+                    Success = true,
+                    Message = "Producto encontrado",
+                    Data = new ProductResponseDto
+                    {
+                        Id = p.Id,
+                        Code = p.Code,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no encontrado"))
+                    return NotFound(new ApiResponse<object> { Success = false, Message = ex.Message });
+
+                return BadRequest(new ApiResponse<object> { Success = false, Message = ex.Message });
+            }
+        }
+
+        
+        [HttpPut("/stock/{id}")]
+        public async Task<IActionResult> UpdateStock(int id, int quantity)
+        {
+            try
+            {
+                await _service.UpdateStock(id, quantity);
+
+                return Ok(new ApiResponse<object>
+                {
+                    Success = true,
+                    Message = "Stock actualizado correctamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no encontrado"))
+                    return NotFound(new ApiResponse<object> { Success = false, Message = ex.Message });
+
+                return BadRequest(new ApiResponse<object> { Success = false, Message = ex.Message });
+            }
+        }
+
+        
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> Update(int id, UpdateProductDto dto)
+        {
+            try
+            {
+                var result = await _service.Update(id, dto);
+
+                return Ok(new ApiResponse<ProductResponseDto>
+                {
+                    Success = true,
+                    Message = "Producto actualizado correctamente",
+                    Data = new ProductResponseDto
+                    {
+                        Id = result.Id,
+                        Code = result.Code,
+                        Name = result.Name,
+                        Price = result.Price,
+                        Stock = result.Stock
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no encontrado"))
+                    return NotFound(new ApiResponse<object> { Success = false, Message = ex.Message });
+
+                return BadRequest(new ApiResponse<object> { Success = false, Message = ex.Message });
+            }
         }
     }
 }

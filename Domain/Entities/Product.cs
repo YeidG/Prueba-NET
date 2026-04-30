@@ -6,11 +6,12 @@ namespace Domain.Entities
 {
     public class Product
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
 
+        public string Code { get; set; }
         public void IncreaseStock(int quantity)
         {
             if (quantity <= 0) throw new Exception("Cantidad inválida");
